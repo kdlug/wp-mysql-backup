@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+
+  mysql:
+    image: mysql:5.6
+    container_name: wordpress_mysql
+    hostname: mysql
+    networks:
+      default:
+        aliases:
+          - mysql
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: root.1234
+    volumes:
+    - ./data/mysql:/var/lib/mysql
+    - ./backups:/backups
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "1"
+    restart: unless-stopped
+
+  wp-mysql-backup:
+    image: kdlug/wp-mysql-backup:latest
+    container_name: wp_mysql_backup
+   # entrypoint: /bin/sh
+    volumes:
+    - ./backups:/backups
+    - ./www:/var/www/wordpress
+    - ./ssh/id_rsa:/root/.ssh/id_rsa
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "1"
+    restart: unless-stopped
+
+
+
