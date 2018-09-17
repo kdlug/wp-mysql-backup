@@ -167,6 +167,7 @@ func dumpDatabase(db Database, outputFile *DumpFile) {
 	outputFile.Suffix = t.Format("20060102150405")
 
 	cmd := exec.Command("mysqldump", "--host", db.Host, "--port", db.Port, "--user", db.Username, "--password="+db.Password, db.Name)
+
 	stdout, err := cmd.StdoutPipe()
 	checkError(err)
 
@@ -176,8 +177,19 @@ func dumpDatabase(db Database, outputFile *DumpFile) {
 	bytes, err := ioutil.ReadAll(stdout)
 	checkError(err)
 
-	err = ioutil.WriteFile(outputFile.getPathName(), bytes, 0644)
+	if len(bytes) == 0 {
+		log.Fatal(errors.New("couldn't dump a database, check the connection"))
+	}
+
+	f, err := os.Create(outputFile.getPathName())
 	checkError(err)
+
+	defer f.Close()
+
+	c, err := f.Write(bytes)
+	checkError(err)
+
+	fmt.Println("Wrote", c, "bytes")
 }
 
 // clone git repository if does not exists and pull latest changes, create a commit and push changes
