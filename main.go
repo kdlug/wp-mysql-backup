@@ -252,12 +252,14 @@ func pushChanges(repository *Repository, file string, src string) {
 
 	fmt.Println(status)
 
+	date := time.Now()
+
 	// prepare commit
-	commit, err := w.Commit("example commit", &git.CommitOptions{
+	commit, err := w.Commit("Database backup "+date.Format("2016-10-11 10:11:12"), &git.CommitOptions{
 		Author: &object.Signature{
 			Name:  repository.Author.Name,
 			Email: repository.Author.Email,
-			When:  time.Now(),
+			When:  date,
 		},
 	})
 	checkError(err)
