@@ -255,7 +255,7 @@ func pushChanges(repository *Repository, file string, src string) {
 	date := time.Now()
 
 	// prepare commit
-	commit, err := w.Commit("Database backup "+date.Format("2016-10-11 10:11:12"), &git.CommitOptions{
+	commit, err := w.Commit("Database backup "+date.Format("2006-01-02 15:04:05"), &git.CommitOptions{
 		Author: &object.Signature{
 			Name:  repository.Author.Name,
 			Email: repository.Author.Email,
